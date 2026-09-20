@@ -1,13 +1,15 @@
 # Few-Shot Object Detection Web App 🎯
 
-A full-stack web application for detecting custom objects in images using OWL-ViT.
+A full-stack web application for detecting custom objects in images using OWL-ViT, with true few-shot (image-guided) detection support.
 
 ## ✨ Features
 
 - 🖼️ Image Upload - Support for JPEG, PNG, WebP
 - 🎯 Custom Object Detection - Detect any object by name
+- 📸 Few-Shot Learning - Provide 1, 5, or 10 support images to guide detection using visual examples, not just text
+- 🟩 Bounding Box Visualization - Detected objects are drawn directly on the query image with confidence labels
 - 📊 Confidence Scoring - Each detection shows confidence
-- 🎨 Beautiful UI - Modern React interface
+- 🎨 Beautiful UI - Modern React interface with live image previews
 - ⚡ Real-time Inference - Fast detection on CPU
 
 ## 🛠️ Tech Stack
@@ -15,7 +17,7 @@ A full-stack web application for detecting custom objects in images using OWL-Vi
 ### Backend
 - FastAPI - Python web framework
 - PyTorch - Deep learning
-- OWL-ViT - Object detection model
+- OWL-ViT - Object detection model (text-prompt + image-guided detection)
 - OpenCV - Image processing
 - Uvicorn - Web server
 
@@ -23,6 +25,7 @@ A full-stack web application for detecting custom objects in images using OWL-Vi
 - React 18 - UI library
 - Vite - Build tool
 - Axios - HTTP client
+- HTML5 Canvas - Bounding box rendering
 - CSS3 - Styling
 
 ## 📁 Project Structure
@@ -71,22 +74,50 @@ npm run dev
 
 1. Open http://localhost:5173
 2. Click "Start Detection"
-3. Upload an image
-4. Enter object name (e.g., "cat", "person")
-5. Click "Detect Objects"
-6. View results with confidence scores
+3. Select a shot type (1-shot, 5-shot, or 10-shot)
+4. Upload the required number of support images (reference images of the object)
+5. Upload a query image (the image to search in)
+6. Enter object name (e.g., "cat", "person")
+7. Click "Detect Objects"
+8. View results with bounding boxes and confidence scores drawn directly on the image
 
 ## 📡 API Endpoints
 
 ### Upload Image
+
 POST /upload
 
 file: Image file
 
-### Detect Objects
-POST /detect?query_image=image.jpg&object_name=cat
 
-Returns: detections with confidence scores
+### Detect Objects
+
+POST /detect
+Content-Type: application/json
+
+{
+"query_image": "image.jpg",
+"object_name": "cat",
+"support_images": ["support1.jpg", "support2.jpg"],
+"confidence_threshold": 0.05
+}
+
+
+Returns: detections with bounding boxes, confidence scores, and detection `mode` (`few-shot` if support images were provided, `zero-shot` otherwise)
+
+## 🆕 Recent Updates
+
+### Bug Fix: Few-Shot Detection Now Fully Functional
+Previously, the `/detect` endpoint did not forward support images to the detection service, so the app always fell back to zero-shot text-based detection regardless of the selected shot type. This has been fixed:
+
+- `/detect` now accepts a JSON body including `support_images` (a list of uploaded filenames)
+- The detection service uses OWL-ViT's `image_guided_detection` method to perform genuine few-shot detection when support images are provided
+- Falls back to zero-shot text-prompt detection automatically when no support images are given
+
+### New Feature: Bounding Box Visualization
+- Detection results are rendered directly on the query image using an HTML5 Canvas
+- Each detected object shows a green bounding box with its label and confidence score
+- Support and query images now display live thumbnail previews immediately after upload
 
 ## 🐛 Troubleshooting
 
@@ -105,6 +136,10 @@ kill -9 [PID]
 - Try different object names
 - Lower confidence threshold
 - Use clear, good quality images
+- For few-shot mode, make sure the number of uploaded support images matches the selected shot type
+
+### Frontend can't reach backend / uploads failing?
+- Check that the frontend's `API_BASE` in `ImageUploader.jsx` matches the port the backend is actually running on
 
 ## 👨‍💻 Author
 
