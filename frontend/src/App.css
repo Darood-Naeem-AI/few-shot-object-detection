@@ -34,6 +34,13 @@ body {
   font-size: 2em;
 }
 
+.uploader-container h1 {
+  color: #333;
+  margin-bottom: 25px;
+  font-size: 1.8em;
+  text-align: center;
+}
+
 .subtitle {
   color: #666;
   margin-bottom: 30px;
@@ -155,7 +162,53 @@ body {
   font-style: italic;
 }
 
+.mode-badge {
+  display: inline-block;
+  background: #667eea;
+  color: white;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 0.85em;
+  margin-bottom: 10px;
+}
+
+.preview-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.preview-thumb {
+  width: 70px;
+  height: 70px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 2px solid #ddd;
+}
+
+.preview-thumb-large {
+  width: 100%;
+  max-height: 250px;
+  object-fit: contain;
+  border-radius: 8px;
+  border: 2px solid #ddd;
+  margin-top: 10px;
+  background: #f5f5f5;
+}
+
 button:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+}
+
+.detection-canvas {
+  width: 100%;
+  max-height: 400px;
+  object-fit: contain;
+  border-radius: 8px;
+  border: 2px solid #ddd;
+  margin: 15px 0;
+  background: #f5f5f5;
+  display: block;
 }
